@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using AspNetCore.Localization.WebApi.Utils;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Localization;
@@ -28,6 +29,19 @@ namespace AspNetCore.Localization.WebApi
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
+            var supportedCultures = new CultureInfo[] {
+                new CultureInfo("zh-TW"),
+                new CultureInfo("zh-CN"),
+                new CultureInfo("en-US"),
+            };
+            services.Configure<RequestLocalizationOptions>(options =>
+            {
+                options.DefaultRequestCulture = new RequestCulture("zh-TW");
+                options.SupportedCultures = supportedCultures;
+                options.SupportedUICultures = supportedCultures;
+                options.RequestCultureProviders.Clear();
+                options.RequestCultureProviders.Insert(0, new RouteCultureProvider());
+            });
             services.AddLocalization();
         }
 
@@ -39,8 +53,7 @@ namespace AspNetCore.Localization.WebApi
                 app.UseDeveloperExceptionPage();
             }
 
-            //This line is no longer needed cus we use the LocalizationMiddleware
-            //app.UseRequestLocalization();
+            app.UseRequestLocalization();
 
             app.UseMvc();
         }
