@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AspNetCore.Localization.Infra.Resources;
 using AspNetCore.Localization.WebApi.Middlewares;
 using AspNetCore.Localization.WebApi.Utils;
 using Microsoft.AspNetCore.Mvc;
@@ -15,8 +16,9 @@ namespace AspNetCore.Localization.WebApi.Controllers
     [ApiController]
     public class LocaleController : ControllerBase
     {
-        private IStringLocalizer<LocaleController> _localizer = null;
-        public LocaleController(IStringLocalizer<LocaleController> localizer)
+        private readonly IStringLocalizer _localizer;
+
+        public LocaleController(IStringLocalizer<ShareResource> localizer)
         {
             this._localizer = localizer;
         }

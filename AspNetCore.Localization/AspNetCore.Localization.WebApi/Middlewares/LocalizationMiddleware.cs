@@ -26,5 +26,4 @@ namespace AspNetCore.Localization.WebApi.Middlewares
             });
         }
     }
-
 }

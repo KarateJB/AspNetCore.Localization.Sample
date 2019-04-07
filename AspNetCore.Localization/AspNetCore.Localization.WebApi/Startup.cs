@@ -28,7 +28,7 @@ namespace AspNetCore.Localization.WebApi
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            services.AddLocalization(options => options.ResourcesPath = "Resources");
+            services.AddLocalization();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
