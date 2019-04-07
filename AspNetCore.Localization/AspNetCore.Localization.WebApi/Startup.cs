@@ -39,21 +39,8 @@ namespace AspNetCore.Localization.WebApi
                 app.UseDeveloperExceptionPage();
             }
 
-            var supportedCultures = new[]
-             {
-                new CultureInfo("zh-TW"),
-                new CultureInfo("zh-CN"),
-                new CultureInfo("en-US"),
-             };
-
-            app.UseRequestLocalization(new RequestLocalizationOptions
-            {
-                DefaultRequestCulture = new RequestCulture("zh-TW"),
-                // Formatting numbers, dates, etc.
-                SupportedCultures = supportedCultures,
-                // UI strings that we have localized.
-                SupportedUICultures = supportedCultures
-            });
+            //This line is no longer needed cus we use the LocalizationMiddleware
+            //app.UseRequestLocalization();
 
             app.UseMvc();
         }

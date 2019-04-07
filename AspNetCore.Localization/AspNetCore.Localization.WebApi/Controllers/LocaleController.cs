@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AspNetCore.Localization.WebApi.Middlewares;
 using AspNetCore.Localization.WebApi.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
@@ -22,6 +23,7 @@ namespace AspNetCore.Localization.WebApi.Controllers
 
         [Route("Get/{locale}")]
         [HttpGet]
+        [MiddlewareFilter(typeof(LocalizationMiddleware))]
         public async Task<string> Get([FromRoute] string locale)
         {
             IEnumerable<LocalizedString> localizedStrs = null;
