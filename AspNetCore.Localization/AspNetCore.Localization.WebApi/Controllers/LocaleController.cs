@@ -25,6 +25,7 @@ namespace AspNetCore.Localization.WebApi.Controllers
 
         [Route("Get/{locale}")]
         [HttpGet]
+        [MiddlewareFilter(typeof(LocalizationMiddleware))]
         public async Task<string> Get([FromRoute] string locale)
         {
             IEnumerable<LocalizedString> localizedStrs =
