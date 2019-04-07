@@ -26,9 +26,19 @@ namespace AspNetCore.Localization.WebApi.Controllers
         {
             IEnumerable<LocalizedString> localizedStrs = null;
             CultureInfo cultureInfo = new CultureInfo(locale);
-            Thread.CurrentThread.CurrentUICulture = cultureInfo;
-            Thread.CurrentThread.CurrentCulture = cultureInfo;
-            localizedStrs = this._localizer.GetAllStrings(includeParentCultures: true);
+
+            #region Option1.Custom localizer
+            var customLocalizer = this._localizer.WithCulture(cultureInfo);
+            localizedStrs = customLocalizer.GetAllStrings(includeParentCultures: true);
+            #endregion
+
+
+            #region Option2. Use Thread.CurrentThread
+            //Thread.CurrentThread.CurrentUICulture = cultureInfo;
+            //Thread.CurrentThread.CurrentCulture = cultureInfo;
+            //localizedStrs = this._localizer.GetAllStrings(includeParentCultures: true);
+            #endregion
+
             return await localizedStrs.ToJsonStringAsync(isCamelLowerCaseForKey: true);
         }
     }
