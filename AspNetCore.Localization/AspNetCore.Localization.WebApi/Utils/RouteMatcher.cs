@@ -31,9 +31,9 @@ public class RouteMatcher : IDisposable
 
         foreach (var parameter in parsedTemplate.Parameters)
         {
-            if (parameter.DefaultValue != null)
+            if (parameter.DefaultValue != null && parameter.Name != null)
             {
-                result.Add(parameter.Name!, parameter.DefaultValue);
+                result.Add(parameter.Name, parameter.DefaultValue);
             }
         }
 
