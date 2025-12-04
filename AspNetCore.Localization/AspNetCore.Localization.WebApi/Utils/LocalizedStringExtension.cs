@@ -1,46 +1,27 @@
-﻿using Microsoft.Extensions.Localization;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text.Json;
+using Microsoft.Extensions.Localization;
 
-namespace AspNetCore.Localization.WebApi.Utils
+namespace AspNetCore.Localization.WebApi.Utils;
+
+public static class LocalizedStringExtension
 {
-    public static class LocalizedStringExtension
+    private static readonly JsonSerializerOptions CamelCaseOptions = new()
     {
-        public static async Task<string> ToJsonStringAsync(this IEnumerable<LocalizedString> source, bool isCamelLowerCaseForKey, string prefixKey = "")
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+    };
+
+    public static Task<string> ToJsonStringAsync(this IEnumerable<LocalizedString> source, bool isCamelLowerCaseForKey, string prefixKey = "")
+    {
+        var dictionary = source.ToDictionary(x => x.Name, x => x.Value);
+
+        var options = isCamelLowerCaseForKey ? CamelCaseOptions : null;
+        var json = JsonSerializer.Serialize(dictionary, options);
+
+        if (!string.IsNullOrEmpty(prefixKey))
         {
-            string json = string.Empty;
-            var dicsTask = localizedStrsToDictionary(source);
-            JsonSerializerSettings camelCaseFormatter = null;
-
-            if (isCamelLowerCaseForKey)
-            {
-                camelCaseFormatter = new JsonSerializerSettings();
-                camelCaseFormatter.ContractResolver = new CamelCasePropertyNamesContractResolver();
-            }
-
-            var dics = await dicsTask;
-            json = camelCaseFormatter == null ?
-                JsonConvert.SerializeObject(dics) :
-                JsonConvert.SerializeObject(dics, camelCaseFormatter);
-
-            if (!string.IsNullOrEmpty(prefixKey))
-            {
-                json = string.Concat("{\"", prefixKey, "\":", json, "}");
-            }
-
-            return json;
+            json = $"{{\"{prefixKey}\":{json}}}";
         }
 
-        private static async Task<Dictionary<string, string>> localizedStrsToDictionary(IEnumerable<LocalizedString> localizedStrs)
-        {
-            IEnumerable<KeyValuePair<string, string>> values = localizedStrs.Select(x => new KeyValuePair<string, string>(
-                 x.Name, x.Value
-                ));
-            Dictionary<string, string> dictionary = values.ToDictionary(k => k.Key, v => v.Value);
-            return dictionary;
-        }
+        return Task.FromResult(json);
     }
 }

@@ -1,50 +1,37 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Localization;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Localization;
 
-namespace AspNetCore.Localization.WebApi.Utils
+namespace AspNetCore.Localization.WebApi.Utils;
+
+public class RouteCultureProvider : RequestCultureProvider
 {
-    public class RouteCultureProvider : RequestCultureProvider
+    private const string DefaultCulture = "zh-TW";
+
+    public override Task<ProviderCultureResult?> DetermineProviderCultureResult(HttpContext httpContext)
     {
-        private const string defaultCulture = "zh-TW";
-        public override Task<ProviderCultureResult> DetermineProviderCultureResult(HttpContext httpContext)
+        ArgumentNullException.ThrowIfNull(httpContext);
+
+        string? finalCulture = null;
+
+        try
         {
-            object finalCulture = string.Empty;
-            if (httpContext == null)
+            using var routeMatcher = new RouteMatcher();
+            var path = httpContext.Request.Path;
+            const string template = "api/Locale/Get/{locale}";
+            var routeValues = routeMatcher.Matches(template, path.Value ?? string.Empty);
+            if (routeValues.TryGetValue("locale", out var culture))
             {
-                throw new ArgumentNullException(nameof(httpContext));
+                finalCulture = culture as string;
             }
-
-
-            //if (!httpContext.User.Identity.IsAuthenticated)
-            //{
-            //    return Task.FromResult((ProviderCultureResult)null);
-            //}
-
-            try
-            {
-                using (var routeMatcher = new RouteMatcher())
-                {
-                    PathString path = httpContext.Request.Path;
-                    var template = "api/Locale/Get/{locale}";
-                    var routeValues = routeMatcher.Matches(template, path.Value);
-                    routeValues.TryGetValue("locale", out finalCulture);
-                }
-            }
-            catch (Exception)
-            {
-                finalCulture = defaultCulture;
-            }
-            finally
-            {
-                finalCulture = finalCulture ?? defaultCulture;
-            }
-
-            return Task.FromResult(new ProviderCultureResult(finalCulture as string));
-
         }
+        catch
+        {
+            finalCulture = DefaultCulture;
+        }
+
+        finalCulture ??= DefaultCulture;
+
+        return Task.FromResult<ProviderCultureResult?>(new ProviderCultureResult(finalCulture));
     }
 }

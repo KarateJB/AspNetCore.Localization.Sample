@@ -1,6 +1,5 @@
-﻿namespace AspNetCore.Localization.Infra.Resources
+namespace AspNetCore.Localization.Infra.Resources;
+
+public class ShareResource
 {
-    public class ShareResource
-    {
-    }
 }
