@@ -10,6 +10,8 @@ namespace AspNetCore.Localization.WebApi.Controllers;
 [ApiController]
 public class LocaleController(IStringLocalizer<ShareResource> localizer) : ControllerBase
 {
+    // Test: 
+    // curl -X GET 'http://localhost:5000/api/Locale/Get/en-US'
     [Route("Get/{locale}")]
     [HttpGet]
     [MiddlewareFilter(typeof(LocalizationMiddleware))]
